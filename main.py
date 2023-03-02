@@ -3,12 +3,9 @@ from flask import Flask, request
 import json
 
 from exceptions import UserNotAllowedError
-
+from classes import UserManager, TokenManager
 
 app = Flask(__name__)
-
-from classes import UserManager
-
 
 @app.route('/api/signup', methods=['POST'])
 def create_new_user():
@@ -41,7 +38,7 @@ def create_or_get_token():
             "password": request_data.get('password'),
         }
 
-        token = user_manager.get_or_create_token(**new_user)
+        token = user_manager.get_user_token(**new_user)
 
         return {"Authorization": f"Token {token}"}, 200
 
@@ -50,6 +47,22 @@ def create_or_get_token():
 
     except Exception as err:
         return {"error": str(err)}, 500
+
+
+@app.route('/api/valid_token', methods=['POST'])
+def valid_token():
+
+    try:
+        request_data = json.loads(request.data)
+
+        token = request_data.get('token')
+        token_manager = TokenManager()
+        user_data = token_manager.verify_token(token_code=token)
+
+        return {"user": user_data }, 200
+
+    except UserNotAllowedError as err:
+        return {"error": str(err)}, 401
 
 
 app.run()

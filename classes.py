@@ -9,6 +9,7 @@ from token_utils import (
     encrypt_message,
 )
 
+
 class User:
 
     def __init__(self, username, password, id=None, created_at=None):
@@ -23,6 +24,7 @@ class User:
             "username": encrypt_message(self.username),
             "created_at": encrypt_message(str(self.created_at))
         }
+
 
 class Token:
 
@@ -39,23 +41,19 @@ class Token:
         # print((date_diff.seconds/60))
         return False if int(date_diff.seconds/60) < 10 else True
 
-class TokenManager(TokenDatabase):
 
+class TokenManager(TokenDatabase):
 
     def _get_token(self, user_id=None, token_code=None):
 
         try:
-            return  [
-                        Token(
-                                code=item[1],
-                                user=item[2],
-                                created_at=item[3]
-                            ) for item in self.select(
-                                user_id=user_id,
-                                token_code=token_code
-                            )
-                    ][0]
-        except:
+            return  [Token(code=item[1], user=item[2], created_at=item[3])
+                    for item in self.select(
+                    user_id=user_id,
+                    token_code=token_code
+                    )][0]
+
+        except Exception as err:
             return None
 
     def get_or_create_token(self, user:User) -> str:

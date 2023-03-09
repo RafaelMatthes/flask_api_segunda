@@ -1,6 +1,5 @@
 import hashlib
 import jwt
-import hashlib
 from cryptography.fernet import Fernet
 
 from string import ascii_uppercase, digits

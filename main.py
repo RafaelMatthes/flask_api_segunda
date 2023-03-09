@@ -64,13 +64,8 @@ def valid_token():
     except UserNotAllowedError as err:
         return {"error": str(err)}, 401
 
+    except json.JSONDecodeError as err:
+        return {"error": str(err)}, 400
 
-app.run()
 
-# TODO: criar uma tabela para armazenar o Token e a data de criação para cada usuário
-
-# TODO: Criar um método para criar um token jwt ou recuperar um token quando informado username e password
-
-# TODO: Criar um endpoint para verificar se o token informado existe na base de dados e se a data de criação
-# do token tem mais de 2 dias ( datime.today() - created_at )
-# se a data de criação for maior que 2 dias, retornar 401, senão 200
+app.run(host='0.0.0.0', port=5000)
